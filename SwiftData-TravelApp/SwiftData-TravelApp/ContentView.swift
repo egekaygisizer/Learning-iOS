@@ -10,37 +10,44 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
-    @Query var destinations: [Destination]
+    @State private var path = [Destination]() // Programmatic navigation
+    @State private var sortOrder = SortDescriptor(\Destination.name)
+    @State private var searchText = ""
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(destinations) { destination in
-                    VStack(alignment: .leading) {
-                        Text(destination.name)
-                            .font(.headline)
-                        
-                        Text(destination.date.formatted(date: .long, time: .shortened))
+        NavigationStack(path: $path) {
+            DestinationListingView(sort: sortOrder, searchString: searchText)
+                .navigationTitle("Travel App")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(for: Destination.self, destination: EditDestinationView.init)
+                .searchable(text: $searchText)
+                .toolbar {
+                    Button("Add Destination", systemImage: "plus", action: addDestination)
+                    
+                    Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                        Picker("Sort by", selection: $sortOrder) {
+                            Text("Name")
+                                .tag(SortDescriptor(\Destination.name))
+                            
+                            Text("Priorty")
+                                .tag(SortDescriptor(\Destination.priority, order: .reverse))
+                            
+                            Text("Date")
+                                .tag(SortDescriptor(\Destination.date))
+                        }
+                        .pickerStyle(.inline)
                     }
                 }
-            }
-            .navigationTitle("Travel App")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                Button("Add Samples", action: addSamples)
-            }
         }
     }
     
-    func addSamples() {
-        let rome = Destination(name: "Rome")
-        let florence = Destination(name: "Florence")
-        let naples = Destination(name: "Naples")
-        
-        modelContext.insert(rome)
-        modelContext.insert(florence)
-        modelContext.insert(naples)
+    func addDestination() {
+        let destination = Destination()
+        modelContext.insert(destination)
+        path = [destination]
     }
+    
+    
 }
 
 #Preview {
