@@ -13,5 +13,6 @@ struct SwiftData_Charts_MoneyManagerApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Income.self])
     }
 }
