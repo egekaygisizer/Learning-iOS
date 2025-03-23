@@ -33,7 +33,7 @@ struct DestinationListingView: View {
     }
     
     init (sort: SortDescriptor<Destination>, searchString: String) {
-        let now = Date.now
+//        let date = Date.now
         
         _destinations = Query(filter: #Predicate {
             if searchString.isEmpty {
