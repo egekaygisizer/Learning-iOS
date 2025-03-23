@@ -10,12 +10,30 @@ import SwiftData
 
 struct IncomeView: View {
     @Environment(\.modelContext) var modelContext
-    @Query var incomes: [Income]
+    @State var sortOption: SortOption = .dateDescending
+    @State var incomes: [Income]
     @State var isShowAddIncomeView: Bool = false
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(alignment: .leading) {
+                
+                HStack {
+                    Picker("Sort by", selection: $sortOption) {
+                        Text("Date ↓").tag(SortOption.dateDescending)
+                        Text("Date ↑").tag(SortOption.dateAscending)
+                        Text("Amount ↓").tag(SortOption.amountDescending)
+                        Text("Amount ↑").tag(SortOption.amountAscending)
+                        Text("Title A-Z").tag(SortOption.titleAscending)
+                        Text("Title Z-A").tag(SortOption.titleDescending)
+                    }
+                    Spacer()
+                    
+                    Button("Add Income", systemImage: "plus") {
+                        isShowAddIncomeView.toggle()
+                    }.buttonStyle(.bordered)
+                }
+                
                 List {
                     ForEach(incomes) { income in
                         VStack {
@@ -45,27 +63,48 @@ struct IncomeView: View {
                     }
                 }
              
-                HStack {
-                    Button("Add", systemImage: "plus") {
-                        isShowAddIncomeView.toggle()
-                    }
-                    
-                    Button("+ Exmple") {
-                        addExample()
-                    }
-                }
                 
+                Spacer()
             }
             .navigationTitle("Income")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $isShowAddIncomeView) {
-                AddIncomeView(modelContext: _modelContext)
+            .onChange(of: sortOption) {
+                fetchAndSortIncome()
             }
-            
+            .onAppear {
+                fetchAndSortIncome()
+            }
+            .sheet(isPresented: $isShowAddIncomeView) {
+                AddIncomeView(modelContext: _modelContext, saveAndFetchAction: fetchAndSortIncome)
+            }
             
         }
         
+    }
+    
+    func fetchAndSortIncome() {
+        let descriptor: FetchDescriptor<Income> // We can fetch and sort data dynamically by using FetchDescriptor
         
+        switch sortOption {
+        case .dateDescending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+        case .dateAscending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.date, order: .forward)])
+        case .amountDescending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.amount, order: .reverse)])
+        case .amountAscending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.amount, order: .forward)])
+        case .titleAscending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.title, order: .forward)])
+        case .titleDescending:
+            descriptor = FetchDescriptor<Income>(sortBy: [SortDescriptor(\.title, order: .reverse)])
+        }
+        
+        do {
+            incomes = try modelContext.fetch(descriptor)
+        } catch {
+            print("Error fetching incomes: \(error)")
+        }
     }
     
     func addExample() {
@@ -78,21 +117,38 @@ struct IncomeView: View {
         modelContext.insert(salaryExmp)
         
         do {
-            try modelContext.save()  // Değişiklikleri kaydedin
+            try modelContext.save() // Save changes do swiftdata
         } catch {
             print("Error saving context: \(error)")
         }
     }
+    
     
     func deleteIncome(_ offsets: IndexSet) {
         offsets.forEach { offset in
             let incomeToDelete = incomes[offset]
             modelContext.delete(incomeToDelete)
         }
+        
+        fetchAndSortIncome()
+        
+        do {
+            try modelContext.save()  // Save changes do swiftdata
+        } catch {
+            print("Error saving context: \(error)")
+        }
     }
-    
+}
+
+enum SortOption {
+    case dateDescending
+    case dateAscending
+    case amountDescending
+    case amountAscending
+    case titleAscending
+    case titleDescending
 }
 
 #Preview {
-    IncomeView()
+    IncomeView(incomes: [])
 }
