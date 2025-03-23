@@ -11,49 +11,77 @@ import SwiftData
 struct IncomeView: View {
     @Environment(\.modelContext) var modelContext
     @Query var incomes: [Income]
+    @State var isShowAddIncomeView: Bool = false
     
     var body: some View {
         NavigationStack {
-            List() {
-                ForEach(incomes) { income in
-                    VStack {
-                        HStack {
-                            Text(income.name)
-                            
-                            Spacer()
-                            
-                            Text(String(format: "%.2f", income.amount))
-                                .foregroundStyle(Color.green)
+            VStack {
+                List {
+                    ForEach(incomes) { income in
+                        VStack {
+                            HStack {
+                                Text(income.title)
+                                
+                                Spacer()
+                                
+                                Text(income.amount, format: .currency(code: "USD"))
+                                    .foregroundStyle(Color.green)
+                                     }
+                                     
+                                     HStack {
+                                    Text(income.category)
+                                        .font(.callout)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    Spacer()
+                                    
+                                    Text(income.date.formatted(date: .long, time: .omitted))
+                                    .font(.callout)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
-                        
-                        Text(income.date.formatted(date: .long, time: .omitted))
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
+                    }.onDelete {
+                        deleteIncome( $0 )
+                    }
+                }
+             
+                HStack {
+                    Button("Add", systemImage: "plus") {
+                        isShowAddIncomeView.toggle()
                     }
                     
+                    Button("+ Exmple") {
+                        addExample()
+                    }
                 }
-                .onDelete {
-                    deleteIncome( $0 )
-                }
+                
+            }
+            .navigationTitle("Income")
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $isShowAddIncomeView) {
+                AddIncomeView(modelContext: _modelContext)
             }
             
-            Button("Add Example") {
-                addExample()
-            }
+            
         }
-        .navigationTitle("Income")
-        .navigationBarTitleDisplayMode(.inline)
+        
         
     }
     
     func addExample() {
-        let marketExmp = Income(name: "Market", amount: 278.99, date: Date.now, category: "Market")
-        let rentExmp = Income(name: "Rent", amount: 2800, date: Date.now, category: "Other")
-        let salaryExmp = Income(name: "Salary", amount: 1250, date: Date.now, category: "Salary")
+        let marketExmp = Income(title: "Market", amount: 278.99, date: Date.now, category: "Market")
+        let rentExmp = Income(title: "Rent", amount: 2800, date: Date.now, category: "Other")
+        let salaryExmp = Income(title: "Salary", amount: 1250, date: Date.now, category: "Salary")
         
         modelContext.insert(marketExmp)
         modelContext.insert(rentExmp)
         modelContext.insert(salaryExmp)
+        
+        do {
+            try modelContext.save()  // Değişiklikleri kaydedin
+        } catch {
+            print("Error saving context: \(error)")
+        }
     }
     
     func deleteIncome(_ offsets: IndexSet) {
@@ -63,9 +91,6 @@ struct IncomeView: View {
         }
     }
     
-    func addIncome() {
-        
-    }
 }
 
 #Preview {

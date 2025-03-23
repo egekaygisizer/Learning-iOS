@@ -10,13 +10,13 @@ import SwiftData
 
 @Model
 class Income {
-    var name: String
+    var title: String
     var amount: Double
     var date: Date
-    var category: String?
+    var category: String
     
-    init(name: String, amount: Double, date: Date, category: String? = nil) {
-        self.name = name
+    init(title: String, amount: Double, date: Date, category: String) {
+        self.title = title
         self.amount = amount
         self.date = date
         self.category = category
