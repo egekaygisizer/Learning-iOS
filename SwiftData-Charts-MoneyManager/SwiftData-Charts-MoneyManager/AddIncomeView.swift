@@ -11,7 +11,6 @@ import SwiftData
 struct AddIncomeView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
-    var saveAndFetchAction: () -> Void = {}
     @State private var title: String = ""
     @State private var amount: Double = 0.0
     @State private var category: String = "Other"
@@ -53,7 +52,6 @@ struct AddIncomeView: View {
     func saveIncome() {
         let newIncome = Income(title: title, amount: amount, date: date, category: category)
         modelContext.insert(newIncome)
-        saveAndFetchAction()
     }
     
 }
