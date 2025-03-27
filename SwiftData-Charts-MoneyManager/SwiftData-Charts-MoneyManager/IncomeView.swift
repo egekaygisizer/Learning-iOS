@@ -26,46 +26,43 @@ struct IncomeView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading) {
-                
-                List {
-                    ForEach(incomes) { income in
-                        VStack {
-                            HStack {
-                                Text(income.title)
-                                
-                                Spacer()
-                                
-                                Text(income.amount, format: .currency(code: "USD"))
-                                    .foregroundStyle(Color.green)
-                                     }
-                                     
-                                     HStack {
-                                    Text(income.category)
-                                        .font(.callout)
-                                        .foregroundStyle(.secondary)
-                                    
-                                    Spacer()
-                                    
-                                    Text(income.date.formatted(date: .long, time: .omitted))
-                                    .font(.callout)
-                                    .foregroundStyle(.secondary)
-                            }
+        VStack(alignment: .leading) {
+            List {
+                ForEach(incomes) { income in
+                    VStack {
+                        HStack {
+                            Text(income.title)
+                            
+                            Spacer()
+                            
+                            Text(income.amount, format: .currency(code: "USD"))
+                                .foregroundStyle(Color.green)
                         }
-                    }.onDelete {
-                        deleteIncome( $0 )
+                        
+                        HStack {
+                            Text(income.category)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                            
+                            Spacer()
+                            
+                            Text(income.date.formatted(date: .long, time: .omitted))
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                }.onDelete {
+                    deleteIncome( $0 )
                 }
-             
-                
-            }
-            .padding()
-            .sheet(isPresented: $isShowAddIncomeView) {
-                AddIncomeView(modelContext: _modelContext)
             }
             
         }
+        .padding()
+        .sheet(isPresented: $isShowAddIncomeView) {
+            AddIncomeView(modelContext: _modelContext)
+        }
+        
+        
         
     }
     
@@ -75,7 +72,7 @@ struct IncomeView: View {
             let incomeToDelete = incomes[offset]
             modelContext.delete(incomeToDelete)
         }
-                
+        
         do {
             try modelContext.save()  // Save changes do swiftdata
         } catch {
