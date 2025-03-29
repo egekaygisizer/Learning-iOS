@@ -77,6 +77,13 @@ struct ContentView: View {
                 .tabItem {
                     Label("Expense", systemImage: "dollarsign")
                 }
+                
+                NavigationView {
+                    ChartView(selectedIncomes: [])
+                        .tabItem {
+                            Label("Chart", systemImage: "chart.bar")
+                        }
+                }
             }
         }
     }
