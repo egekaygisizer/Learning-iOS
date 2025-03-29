@@ -22,3 +22,18 @@ class Income {
         self.category = category
     }
 }
+
+@Model
+class Expense {
+    var title: String
+    var amount: Double
+    var date: Date
+    var category: String
+    
+    init(title: String, amount: Double, date: Date, category: String) {
+        self.title = title
+        self.amount = amount
+        self.date = date
+        self.category = category
+    }
+}
