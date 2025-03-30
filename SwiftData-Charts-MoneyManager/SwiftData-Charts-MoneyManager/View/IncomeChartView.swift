@@ -14,7 +14,7 @@ struct IncomeChartView: View {
     @State var isSelectedValue: Double?
     @State var incomeCategory: String?
     
-    @Query var incomes: [Income]
+    @Query(sort: \Income.category) var incomes: [Income]
     
     var body: some View {
         VStack {

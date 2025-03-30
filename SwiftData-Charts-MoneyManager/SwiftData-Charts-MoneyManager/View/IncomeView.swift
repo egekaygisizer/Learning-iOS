@@ -26,7 +26,7 @@ struct IncomeView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading) {            
             List {
                 ForEach(incomes) { income in
                     VStack {
@@ -54,7 +54,7 @@ struct IncomeView: View {
                 }.onDelete {
                     deleteIncome( $0 )
                 }
-            }
+            }.listStyle(.inset)
             
         }
         .padding()

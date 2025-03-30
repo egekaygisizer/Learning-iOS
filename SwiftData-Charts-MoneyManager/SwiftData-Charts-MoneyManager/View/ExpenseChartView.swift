@@ -14,7 +14,7 @@ struct ExpenseChartView: View {
     @State var isSelectedValue: Double?
     @State var expenseCategory: String?
     
-    @Query var expenses: [Expense]
+    @Query(sort: \Expense.category) var expenses: [Expense]
     
     var body: some View {
         VStack {
@@ -49,7 +49,6 @@ struct ExpenseChartView: View {
                 ScrollView {
                     ForEach(expenses) { expense in
                         if (expense.category == expenseCategory) {
-                            
                             VStack {
                                 HStack {
                                     Text(expense.title)

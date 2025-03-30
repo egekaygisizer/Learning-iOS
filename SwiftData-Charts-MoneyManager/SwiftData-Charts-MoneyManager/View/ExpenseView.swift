@@ -28,25 +28,25 @@ struct ExpenseView: View {
     var body: some View {
         VStack(alignment: .leading) {
             List {
-                ForEach(expenses) { expenses in
+                ForEach(expenses) { expense in
                     VStack {
                         HStack {
-                            Text(expenses.title)
+                            Text(expense.title)
                             
                             Spacer()
                             
-                            Text(expenses.amount, format: .currency(code: "USD"))
+                            Text(expense.amount, format: .currency(code: "USD"))
                                 .foregroundStyle(Color.red)
                         }
                         
                         HStack {
-                            Text(expenses.category)
+                            Text(expense.category)
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                             
                             Spacer()
                             
-                            Text(expenses.date.formatted(date: .long, time: .omitted))
+                            Text(expense.date.formatted(date: .long, time: .omitted))
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         }
@@ -54,7 +54,7 @@ struct ExpenseView: View {
                 }.onDelete {
                     deleteExpense( $0 )
                 }
-            }
+            }.listStyle(.inset)
             
         }
         .padding()

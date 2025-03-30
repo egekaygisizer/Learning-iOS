@@ -45,7 +45,7 @@ struct ContentView: View {
                         }
                 }
                 .tabItem {
-                    Label("Income", systemImage: "dollarsign")
+                    Label("Income", systemImage: "dollarsign.bank.building")
                 }
                 
                 NavigationView {
