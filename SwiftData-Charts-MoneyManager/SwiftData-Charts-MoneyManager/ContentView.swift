@@ -79,10 +79,12 @@ struct ContentView: View {
                 }
                 
                 NavigationView {
-                    ChartView(selectedIncomes: [])
-                        .tabItem {
-                            Label("Chart", systemImage: "chart.bar")
-                        }
+                    ChartView()
+                        .navigationTitle("Stats")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+                .tabItem {
+                    Label("Chart", systemImage: "chart.pie")
                 }
             }
         }
